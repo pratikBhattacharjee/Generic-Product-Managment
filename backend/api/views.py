@@ -8,11 +8,13 @@ from products.serializers import ProductSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
   
-@api_view(['GET'])
-def api_home(requests, *args, **kwargs):
-    model_data = Product.objects.all().order_by("?").first()
-    data = {}
-    if model_data:
-        data = ProductSerializer(model_data).data
+@api_view(['POST'])
+def api_home(request, *args, **kwargs):
+    """Accepts a Product data and echoes it back."""
+    serializer = ProductSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save()
+        print(serializer.data)
+        return Response(serializer.data)
 
-    return Response(data)
+    
