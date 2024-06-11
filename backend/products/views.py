@@ -25,8 +25,22 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
 
         serializer.save(content=content)
 
-        #send a Django Signal
+#class-based view to handle update
+class ProductUpdateAPIView(generics.UpdateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = 'pk'
 
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        if instance.content is None:
+            instance.content = instance.title
+            pass
+
+class ProductDeleteAPIView(generics.DestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = 'pk'
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
