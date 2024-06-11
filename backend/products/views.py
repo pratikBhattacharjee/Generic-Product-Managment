@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, mixins
 import rest_framework
 
 
@@ -72,3 +72,30 @@ def product_alt_view(request,pk=None, *args, **kwargs):
             serializer.save(content=content)
             return Response(serializer.data)
         return Response(serializer.errors)
+    
+
+#Mixin View
+
+class ProductMixinView(generics.GenericAPIView,
+                       mixins.ListModelMixin
+                       ,mixins.RetrieveModelMixin
+                       ,mixins.CreateModelMixin
+                       ,mixins.UpdateModelMixin):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = 'pk'
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        if pk is not None:
+            return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
