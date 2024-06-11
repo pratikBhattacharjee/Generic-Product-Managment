@@ -20,5 +20,5 @@ class ProductSerializer(ModelSerializer):
     def get_discount(self, obj):
         try:
             return obj.get_discount()
-        except:
+        except Exception as e:
             return None
